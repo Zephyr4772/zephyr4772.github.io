@@ -5,9 +5,7 @@
   --sans: -apple-system, "Segoe UI", system-ui, Roboto, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
-@media (prefers-color-scheme: dark) {
-  :root { --bg: #14181c; --ink: #ece8e1; --muted: #9aa2a9; --line: #2a3036; --card: #1b2025; --accent: #3fb5ab; --code-bg: #0e1113; }
-}
+:root { color-scheme: light; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--ink); font: 18px/1.7 var(--sans); -webkit-font-smoothing: antialiased; }
 a { color: var(--accent); text-underline-offset: 3px; }

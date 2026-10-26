@@ -31,11 +31,29 @@ A decision model takes an input, a question and a fixed set of answers, and retu
 | Options passed in the request | zero-shot classification |
 | Probability per option | softmax / sigmoid output |
 
-The closest ancestor is zero-shot classification through natural-language inference (NLI), which has been one line in the `transformers` library since 2019. You pass the text and the candidate answers; the model scores how strongly the text supports each one. No training, options supplied at request time: the same contract Jev and Laya offer.
+"Pick one of these options, with a confidence" is one of the oldest shapes in machine learning:
+
+- **2000s, spam filters:** logistic regression making binary decisions with probabilities, at enormous scale.
+- **2010s, intent classifiers** in chatbot frameworks like Rasa and Dialogflow: routing a message means choosing among options.
+- **2019, zero-shot classification through natural-language inference (NLI):** models like `facebook/bart-large-mnli` take the candidate answers *in the request*, with no training. You pass the text and the options; the model scores how strongly the text supports each one.
+- **2020–2022, rerankers, reward models and SetFit:** scoring candidates instead of generating text, and few-shot classifier heads on sentence embeddings.
+
+The 2019 NLI approach is the closest ancestor: no training, options supplied at request time, the same contract Jev and Laya offer. It has been one line in the `transformers` library for years.
 
 So if decision models are a real step forward, they should clearly beat a 2019 NLI classifier on the job they're built for. That's the test.
 
-To be fair to the new wave: the product is genuinely better. A typed API with probabilities beats coaxing JSON out of an LLM, and one forward pass is far cheaper than generating text. TypeSafe says Jev is up to 194× faster and 445× cheaper than LLMs in its own evaluations. This post isn't about speed or ergonomics. It's about whether the *decisions* are better.
+### What is genuinely new
+
+To be fair to the new wave, the product around the classifier is better:
+
+- **Agent state as a first-class input.** One general model that reads transcripts and tool output and answers any decision question about them, instead of a separate model trained per task.
+- **A typed API as the contract.** Choices, scores and yes/no answers with probabilities, instead of coaxing JSON out of an LLM and hoping it parses.
+- **Speed and cost.** One forward pass is far cheaper than generating text. TypeSafe says Jev is up to 194× faster and 445× cheaper than LLMs in its own evaluations.
+- **Distribution.** Being in the gateways developers already use, within days of launch.
+
+The trade-off is the classic one: the model hands you a probability, and *you* decide how much is enough to act on.
+
+None of that is about decision quality. This post is: are the *decisions* better than what a 2019 classifier makes?
 
 ## The setup
 
