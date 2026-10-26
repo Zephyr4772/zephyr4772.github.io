@@ -18,7 +18,7 @@ So I put Laya head-to-head with a zero-shot classifier from 2019 on 244 agent-gu
 - **Laya (2026) and BART-large-MNLI (2019) are statistically tied:** 52.5% vs 49.2% mean accuracy, with overlapping 95% confidence intervals.
 - **Neither beats a model that reads nothing** and always gives the most common answer (67.6%).
 - **They fail in different places.** Laya is better at spotting destructive commands; the 2019 model is better at recognising a finished task.
-- **I couldn't test Jev** (no API access). It has the same interface, so the same three checks apply before you trust it. They're at the end, and they take about ten minutes.
+- **Three ten-minute checks**, at the end, tell you whether any decision model is worth trusting with your agent.
 
 ## Why a 2019 classifier is the fair opponent
 
@@ -100,11 +100,9 @@ The averages hide two different failure profiles.
 
 **Both get "should the agent keep going?" backwards.** AUROC 0.32 to 0.43 means their confidence leans the wrong way: flipping the score would do better than using it.
 
-## What this means for Jev
+## Before you trust a decision model
 
-I can't tell you how Jev scores, and I won't guess. What these results do say is that the interface alone, typed answers with probabilities, doesn't guarantee better decisions than a 2019 classifier. The decision quality has to be measured, the same way it is for any classifier.
-
-If you're adopting Jev or any decision model as an agent guard, run these three checks first.
+These results show that the interface alone, typed answers with probabilities, doesn't guarantee better decisions than a 2019 classifier. Decision quality has to be measured, the same way it is for any classifier. If you're adopting a decision model as an agent guard, run these three checks first.
 
 **1. Beat the constant answer.** Count how often the most common label is correct on your data. If the model doesn't clearly beat that number, its probabilities aren't telling you anything.
 
@@ -133,6 +131,10 @@ The same limit applies to everything here: 61 templated transcripts are good at 
 
 1. **On agent-guardrail decisions, the 2026 open decision model doesn't measurably beat a 2019 zero-shot classifier:** 52.5% vs 49.2%, overlapping intervals.
 2. **Neither is a guardrail out of the box.** Neither beats the constant answer, Laya never escalated a destructive command to a human, and its typed-decisions checkpoint trusted "done" over failing tests every time.
-3. **Before trusting Jev or any decision model, run the three checks above** on your own transcripts: the constant answer, the one-line 2019 baseline, and held-out situation types.
+3. **Before trusting any decision model, run the three checks above** on your own transcripts: the constant answer, the one-line 2019 baseline, and held-out situation types.
 
-Everything is public: the [benchmark](https://huggingface.co/datasets/sinhal/agent-step-guard-bench), the Laya predictions, and the [baseline scripts](https://github.com/Zephyr4772/laya-zeroshot-agent-guard-eval/tree/main/baselines). If you have Jev access, run it and send me the numbers. I'll add the row.
+Everything is public: the [benchmark](https://huggingface.co/datasets/sinhal/agent-step-guard-bench), the Laya predictions, and the [baseline scripts](https://github.com/Zephyr4772/laya-zeroshot-agent-guard-eval/tree/main/baselines).
+
+---
+
+**TL;DR on Jev:** I couldn't test it, because I don't have API access, so this post makes no claim about how it scores. It uses the same interface as Laya, so the same three checks apply before you trust it. If you have access, run it on the benchmark and send me the numbers. I'll add the row.
