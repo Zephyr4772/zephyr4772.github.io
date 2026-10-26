@@ -1,0 +1,18 @@
+title: Sinhal Joshi
+description: Notes on evaluating AI systems, mostly where models fail.
+url: https://zephyr4772.github.io
+author: Sinhal Joshi
+permalink: /:title/
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+links:
+  github: https://github.com/Zephyr4772
+  huggingface: https://huggingface.co/sinhal
+  linkedin: https://www.linkedin.com/in/sinhaljjoshi
+exclude:
+  - README.md

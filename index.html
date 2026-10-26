@@ -1,0 +1,19 @@
+---
+layout: default
+title: Sinhal Joshi
+---
+<section class="intro">
+  <h1>Writing</h1>
+  <p>{{ site.description }} I build and benchmark agent systems, retrieval pipelines and the evals that check whether any of it works.</p>
+</section>
+<ul class="posts">
+  {% for post in site.posts %}
+  <li>
+    <a href="{{ post.url | relative_url }}">
+      <span class="date">{{ post.date | date: "%b %-d, %Y" }}</span>
+      <span class="title">{{ post.title }}</span>
+      {% if post.description %}<span class="desc">{{ post.description }}</span>{% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
