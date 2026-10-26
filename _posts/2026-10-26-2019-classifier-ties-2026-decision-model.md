@@ -7,11 +7,11 @@ image: /assets/img/decision-models-2019-vs-2026.png
 image_alt: "Bar chart: BART-large-MNLI 2019 at 49.2%, Laya 2026 at 52.5%, always the same answer at 67.6%, with overlapping confidence intervals"
 ---
 
-In September 2026, TypeSafe AI launched **Jev**, a "decision model". You give it the state of a task and a question with a fixed set of options, and it returns typed answers (a choice, a score, a yes/no), each with a probability, in a single pass. Vercel added it to its AI Gateway within days and called it the fastest-adopted model in the gateway's history. The open-source **Laya** works the same way.
+In September 2026, TypeSafe AI launched **Jev**, a "decision model". You give it a task and a question with a fixed set of options, and it returns typed answers (a choice, a score, a yes/no), each with a probability, in a single pass. Vercel added it to its AI Gateway and called it the fastest-adopted model in the gateway's history. The open-source **Laya** works the same way.
 
-The pitch is that this is a new kind of model for agents. I wanted to know something narrower and testable: **is it better at agent decisions than what we already had?**
+The pitch is that this claimed to be a new kind of model for agents. but its not new, we already had classifier models that virtually did the same thing so: **is it better at agent decisions than what we already had?**
 
-So I put Laya head-to-head with a zero-shot classifier from 2019 on 244 agent-guardrail decisions.
+I put Laya head-to-head with a zero-shot classifier from 2019 on 244 agent-guardrail decisions.
 
 **The short version:**
 
