@@ -41,11 +41,9 @@ ul.posts a:hover .title { color: var(--accent); }
 .post img { max-width: 100%; }
 .back { margin-top: 48px; }
 
-table { width: 100%; border-collapse: collapse; margin: 8px 0 28px; font-size: 15px; display: block; overflow-x: auto; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-td:first-child { min-width: 150px; }
-td:not(:first-child) { white-space: nowrap; }
-td:last-child:not(:nth-child(-n+2)) { white-space: normal; }
+table { width: 100%; border-collapse: collapse; margin: 8px 0 28px; font-size: 14.5px; line-height: 1.45; }
+th, td { text-align: left; padding: 8px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+@media (max-width: 640px) { table { display: block; overflow-x: auto; } }
 th { font: 600 13px var(--sans); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--card); }
 code { font: 0.86em var(--mono); background: var(--card); padding: 2px 5px; border-radius: 4px; }
 pre { background: var(--code-bg); color: var(--code-ink); padding: 18px 20px; border-radius: 10px; overflow-x: auto; font-size: 14.5px; line-height: 1.55; margin: 0 0 24px; }
