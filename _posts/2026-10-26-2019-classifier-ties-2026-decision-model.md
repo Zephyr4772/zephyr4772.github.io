@@ -3,7 +3,7 @@ layout: post
 title: "A 2019 classifier ties a 2026 decision model on agent guardrails"
 description: "Zero-shot, an open 2026 decision model does no better than a 2019 NLI classifier on 244 agent-guardrail decisions, and neither beats always giving the same answer."
 tag: Agent evals
-image: /assets/img/decision-models-2019-vs-2026.png
+image: /assets/img/decision-models-2019-vs-2026-light.png
 image_alt: "Bar chart: BART-large-MNLI 2019 at 49.2%, Laya 2026 at 52.5%, always the same answer at 67.6%, with overlapping confidence intervals"
 ---
 
