@@ -1,17 +1,17 @@
 ---
 layout: post
-title: "Same CSV, different verdicts: checking whether your data can do the job before you train"
+title: "No model can fix data that doesn't fit the question"
 description: "I built Dr.Data, a pre-training audit for tabular data. One retail table scores 60 for predicting profit and 30 for predicting returns. A sabotaged medical dataset gives up every planted defect. The question it answers is not 'is this data clean?' but 'is this data fit for this use case?'"
 tag: Data quality
 image: /assets/img/drdata/cover.png
-image_alt: "Dr.Data fitness scores for four audits: breast cancer clean 97, sabotaged 60, retail profit 60, retail returns 30"
+image_alt: "Predicting returns: ROC-AUC 0.48 with real labels vs 0.51 with shuffled labels; Dr.Data fitness scores: breast cancer clean 97, sabotaged 60, retail profit 60, retail returns 30"
 ---
 
 Most ML projects start by training a model. When the score is bad, the usual next step is a bigger model, more tuning, more epochs. Sometimes the problem is not the model at all: **the data can't support the question being asked.**
 
 I wanted a tool that answers that question *before* training. So I built **[Dr.Data](https://github.com/Zephyr4772/Dr.Data)**: you give it a table and a use case (the target, what a mistake costs, when you'll be predicting, which columns you won't have at that moment), and it tells you whether the data is fit for that use case, and if it is, how to train on it.
 
-The point of the title: **the same table can be fine for one use case and useless for another.**
+The catch is that fitness depends on the question: **the same table can be fine for one use case and useless for another.**
 
 **The short version:**
 
