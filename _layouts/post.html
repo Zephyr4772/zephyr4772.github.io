@@ -1,10 +1,49 @@
 ---
 layout: default
 ---
-<article class="post">
-  <p class="meta">{{ page.date | date: "%B %-d, %Y" }}{% if page.tag %} · {{ page.tag }}{% endif %}</p>
-  <h1>{{ page.title }}</h1>
-  {% if page.image %}<img class="cover" src="{{ page.image | relative_url }}" alt="{{ page.image_alt }}">{% endif %}
-  {{ content }}
-</article>
-<p class="back"><a href="{{ '/' | relative_url }}">← All posts</a></p>
+{% assign words = content | number_of_words %}
+<section class="hero post-hero">
+  <h1 class="display">{{ page.title }}</h1>
+</section>
+
+<section class="post-grid">
+  <aside class="meta-col">
+    <p class="label">/ METADATA</p>
+    <dl>
+      <dt>DATE:</dt><dd>{{ page.date | date: "%Y.%-m.%-d" }}</dd>
+      <dt>AUTHOR:</dt><dd>{{ site.author | upcase }}</dd>
+      <dt>READING TIME:</dt><dd>{{ words | divided_by: 200 | plus: 1 }} MINUTES</dd>
+      {% if page.tag %}<dt>CATEGORIES:</dt><dd><span class="chip">{{ page.tag | upcase }}</span></dd>{% endif %}
+    </dl>
+    <p class="share-label">SHARE:</p>
+    <div class="share">
+      <a class="pill" href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | uri_escape }}&text={{ page.title | uri_escape }}">Twitter/X</a>
+      <a class="pill" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | uri_escape }}">LinkedIn</a>
+    </div>
+  </aside>
+
+  <article class="post">
+    <p class="label">/ ARTICLE</p>
+    {% if page.image %}<img class="cover" src="{{ page.image | relative_url }}" alt="{{ page.image_alt }}">{% endif %}
+    {{ content }}
+  </article>
+</section>
+
+{% assign others = site.posts | where_exp: "p", "p.url != page.url" %}
+<section class="related">
+  <p class="label rel-label">/ RELATED ARTICLES</p>
+  <div class="rel-grid">
+    {% for p in others limit: 2 %}
+    <a class="rel" href="{{ p.url | relative_url }}">
+      <div class="fig"><div class="fig-bar"><span>▢</span><span>[ FIG. {{ forloop.index }} ]</span><span>≡</span></div>
+        <div class="fig-body">{% if p.image %}<img src="{{ p.image | relative_url }}" alt="{{ p.image_alt }}">{% else %}<div class="pattern"></div>{% endif %}</div></div>
+      <div class="rel-text">
+        <h3>{{ p.title }} ↗</h3>
+        <p>{{ p.description | truncate: 110 }}</p>
+        {% if p.tag %}<span class="chip">{{ p.tag | upcase }}</span>{% endif %}
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+<p class="back"><a href="{{ '/' | relative_url }}">← ALL POSTS</a></p>

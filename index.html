@@ -2,18 +2,46 @@
 layout: default
 title: Sinhal Joshi
 ---
-<section class="intro">
-  <h1>Writing</h1>
-  <p>{{ site.description }} I build and benchmark agent systems, retrieval pipelines and the evals that check whether any of it works.</p>
+{% assign tags = site.posts | map: "tag" | uniq | sort %}
+<section class="hero">
+  <h1 class="display">Blog <sup>({{ site.posts.size }})</sup></h1>
+  <p class="lede">{{ site.description }} I build and benchmark agent systems, retrieval pipelines and the evals that check whether any of it works.</p>
 </section>
-<ul class="posts">
-  {% for post in site.posts %}
-  <li>
-    <a href="{{ post.url | relative_url }}">
-      <span class="date">{{ post.date | date: "%b %-d, %Y" }}</span>
-      <span class="title">{{ post.title }}</span>
-      {% if post.description %}<span class="desc">{{ post.description }}</span>{% endif %}
-    </a>
-  </li>
-  {% endfor %}
-</ul>
+
+<section class="index">
+  <aside class="filters">
+    <p class="label">/ FILTERS</p>
+    <p class="group">▾ Topic</p>
+    <ul>
+      {% for t in tags %}{% assign n = site.posts | where: "tag", t | size %}
+      <li><label><input type="checkbox" value="{{ t }}"><span class="box"></span>{{ t }} ({{ n }})</label></li>
+      {% endfor %}
+    </ul>
+    <div class="fig small"><div class="fig-bar"><span>▢</span><span>[ FIG. 0 ]</span><span>≡</span></div><div class="fig-body"><div class="pattern"></div></div></div>
+  </aside>
+
+  <div class="list">
+    <div class="list-head label"><span>/ DATE</span><span>/ NAME</span></div>
+    <ul class="posts">
+      {% for post in site.posts %}
+      <li data-tag="{{ post.tag }}">
+        <a href="{{ post.url | relative_url }}">
+          <span class="date">■ {{ post.date | date: "%Y.%-m.%-d" }}</span>
+          <span class="title">{{ post.title }}{% if post.description %}<span class="desc">{{ post.description }}</span>{% endif %}</span>
+          <span class="plus">+</span>
+        </a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+<script>
+  (function () {
+    var boxes = document.querySelectorAll('.filters input'), rows = document.querySelectorAll('.posts li');
+    function apply() {
+      var on = [].filter.call(boxes, function (b) { return b.checked; }).map(function (b) { return b.value; });
+      rows.forEach(function (r) { r.hidden = on.length > 0 && on.indexOf(r.dataset.tag) < 0; });
+    }
+    boxes.forEach(function (b) { b.addEventListener('change', apply); });
+  })();
+</script>

@@ -5,21 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   {% seo %}
   {% feed_meta %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
 </head>
 <body>
-  <header class="site">
-    <a class="name" href="{{ '/' | relative_url }}">{{ site.title }}</a>
-    <nav>
-      <a href="{{ site.links.github }}">GitHub</a>
-      <a href="{{ site.links.huggingface }}">Hugging Face</a>
-      <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
-    </nav>
-  </header>
-  <main>{{ content }}</main>
-  <footer class="site">
-    <span>© {{ 'now' | date: '%Y' }} {{ site.author }}</span>
-    <a href="{{ site.links.linkedin }}">LinkedIn</a>
-  </footer>
+  <div class="frame">
+    <header class="bar">
+      <nav class="keys">
+        <a class="logo" href="{{ '/' | relative_url }}" aria-label="{{ site.title }}">■</a>
+        <a href="{{ '/' | relative_url }}" data-key="b" class="{% if page.url == '/' or page.layout == 'post' %}on{% endif %}">[B] BLOG</a>
+        <a href="{{ site.links.github }}" data-key="g">[G] GITHUB</a>
+        <a href="{{ site.links.huggingface }}" data-key="h">[H] HUGGING FACE</a>
+        <a href="{{ '/feed.xml' | relative_url }}" data-key="r">[R] RSS</a>
+      </nav>
+      <a class="console" href="{{ site.links.linkedin }}" data-key="l">[L] LINKEDIN</a>
+    </header>
+
+    <main>{{ content }}</main>
+
+    <footer class="foot">
+      <div class="cell about">
+        <p class="label">/ ABOUT</p>
+        <p class="big">{{ site.title }}. {{ site.description }}</p>
+        <a class="pill" href="{{ site.links.github }}">Learn more</a>
+      </div>
+      <div class="cell links">
+        <p class="label">/ SOCIAL</p>
+        <p class="tags"><a href="{{ site.links.github }}">GITHUB</a><a href="{{ site.links.huggingface }}">HUGGING FACE</a><a href="{{ site.links.linkedin }}">LINKEDIN</a></p>
+        <p class="label">/ RESOURCES</p>
+        <p class="tags"><a href="{{ '/' | relative_url }}">BLOG</a><a href="{{ '/feed.xml' | relative_url }}">RSS</a></p>
+      </div>
+      <div class="cell legal"><span>© {{ 'now' | date: '%Y' }} {{ site.author | upcase }}</span></div>
+    </footer>
+  </div>
+  <script>
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey || /input|textarea/i.test((e.target || {}).tagName)) return;
+      var a = document.querySelector('.bar [data-key="' + e.key.toLowerCase() + '"]');
+      if (a) a.click();
+    });
+  </script>
 </body>
 </html>
