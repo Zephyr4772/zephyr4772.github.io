@@ -3,47 +3,114 @@ layout: default
 ---
 {% assign words = content | number_of_words %}
 <section class="hero post-hero">
+  <p class="label"><a href="{{ '/' | relative_url }}">/ BLOG</a> / {{ page.tag | default: "POST" | upcase }}</p>
   <h1 class="display">{{ page.title }}</h1>
+  {% if page.description %}<p class="lede">{{ page.description }}</p>{% endif %}
 </section>
 
+{% include cross.html %}
 <section class="post-grid">
   <aside class="meta-col">
-    <p class="label">/ METADATA</p>
-    <dl>
-      <dt>DATE:</dt><dd>{{ page.date | date: "%Y.%-m.%-d" }}</dd>
-      <dt>AUTHOR:</dt><dd>{{ site.author | upcase }}</dd>
-      <dt>READING TIME:</dt><dd>{{ words | divided_by: 200 | plus: 1 }} MINUTES</dd>
-      {% if page.tag %}<dt>CATEGORIES:</dt><dd><span class="chip">{{ page.tag | upcase }}</span></dd>{% endif %}
-    </dl>
-    <p class="share-label">SHARE:</p>
-    <div class="share">
-      <a class="pill" href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | uri_escape }}&text={{ page.title | uri_escape }}">Twitter/X</a>
-      <a class="pill" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | uri_escape }}">LinkedIn</a>
+    <div class="meta-block">
+      <p class="label head">/ METADATA</p>
+      <dl>
+        <dt>DATE</dt><dd>{{ page.date | date: "%Y.%m.%d" }}</dd>
+        <dt>AUTHOR</dt><dd>{{ site.author | upcase }}</dd>
+        <dt>READING TIME</dt><dd>{{ words | divided_by: 200 | plus: 1 }} MIN</dd>
+        {% if page.tag %}<dt>TOPIC</dt><dd><span class="chip">{{ page.tag | upcase }}</span></dd>{% endif %}
+      </dl>
+    </div>
+    <div class="meta-block toc-block" hidden>
+      <p class="label head">/ CONTENTS</p>
+      <ol class="toc"></ol>
+    </div>
+    <div class="meta-block">
+      <p class="label head">/ SHARE</p>
+      <div class="share">
+        <a class="pill" href="https://twitter.com/intent/tweet?url={{ page.url | absolute_url | uri_escape }}&text={{ page.title | uri_escape }}">Twitter/X</a>
+        <a class="pill" href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | uri_escape }}">LinkedIn</a>
+      </div>
     </div>
   </aside>
 
   <article class="post">
-    <p class="label">/ ARTICLE</p>
+    <p class="label head">/ ARTICLE</p>
     {% if page.image %}<img class="cover" src="{{ page.image | relative_url }}" alt="{{ page.image_alt }}">{% endif %}
-    {{ content }}
+    <div class="post-body">
+      {{ content }}
+    </div>
   </article>
 </section>
 
-{% assign others = site.posts | where_exp: "p", "p.url != page.url" %}
+{% if page.previous or page.next %}
+{% include cross.html %}
+<nav class="pager" aria-label="More posts">
+  {% if page.previous %}<a class="prev" href="{{ page.previous.url | relative_url }}"><span class="label">← PREVIOUS</span><span class="t">{{ page.previous.title }}</span></a>{% else %}<span></span>{% endif %}
+  {% if page.next %}<a class="next" href="{{ page.next.url | relative_url }}"><span class="label">NEXT →</span><span class="t">{{ page.next.title }}</span></a>{% endif %}
+</nav>
+{% endif %}
+
+{% include cross.html %}
 <section class="related">
   <p class="label rel-label">/ RELATED ARTICLES</p>
   <div class="rel-grid">
-    {% for p in others limit: 2 %}
+    {% assign shown = 0 %}
+    {% for p in site.posts %}{% if p.url != page.url and shown < 2 %}{% assign shown = shown | plus: 1 %}
     <a class="rel" href="{{ p.url | relative_url }}">
-      <div class="fig"><div class="fig-bar"><span>▢</span><span>[ FIG. {{ forloop.index }} ]</span><span>≡</span></div>
+      <div class="fig"><div class="fig-bar"><span>▢</span><span>[ FIG. R{{ shown }} ]</span><span>≡</span></div>
         <div class="fig-body">{% if p.image %}<img src="{{ p.image | relative_url }}" alt="{{ p.image_alt }}">{% else %}<div class="pattern"></div>{% endif %}</div></div>
       <div class="rel-text">
         <h3>{{ p.title }} ↗</h3>
-        <p>{{ p.description | truncate: 110 }}</p>
+        <p>{{ p.description | truncate: 120 }}</p>
         {% if p.tag %}<span class="chip">{{ p.tag | upcase }}</span>{% endif %}
       </div>
     </a>
-    {% endfor %}
+    {% endif %}{% endfor %}
   </div>
 </section>
-<p class="back"><a href="{{ '/' | relative_url }}">← ALL POSTS</a></p>
+
+<script>
+  (function () {
+    var body = document.querySelector('.post-body'), article = document.querySelector('.post');
+    // Frame every image as a numbered figure with its alt text as caption.
+    var n = 0;
+    article.querySelectorAll('img').forEach(function (img) {
+      n++;
+      var holder = img.parentNode.tagName === 'P' && img.parentNode.childNodes.length === 1 ? img.parentNode : img;
+      var fig = document.createElement('figure');
+      fig.className = 'fig post-fig';
+      fig.innerHTML = '<div class="fig-bar"><span>▢</span><span>[ FIG. ' + n + ' ]</span><span>≡</span></div><div class="fig-img"></div>';
+      holder.parentNode.insertBefore(fig, holder);
+      fig.querySelector('.fig-img').appendChild(img);
+      if (holder !== img) holder.remove();
+      if (img.alt) { var cap = document.createElement('figcaption'); cap.textContent = 'FIG. ' + n + ' — ' + img.alt; fig.appendChild(cap); }
+    });
+    // Wrap tables so they scroll on small screens.
+    body.querySelectorAll('table').forEach(function (t) { var w = document.createElement('div'); w.className = 'table-wrap'; t.parentNode.insertBefore(w, t); w.appendChild(t); });
+    // Contents list from h2s, with active-section tracking.
+    var hs = body.querySelectorAll('h2'), toc = document.querySelector('.toc');
+    if (hs.length > 1) {
+      document.querySelector('.toc-block').hidden = false;
+      hs.forEach(function (h, i) {
+        if (!h.id) h.id = 'section-' + (i + 1);
+        var li = document.createElement('li'), a = document.createElement('a');
+        a.href = '#' + h.id; a.innerHTML = '<span>' + String(i + 1).padStart(2, '0') + '</span>' + h.textContent;
+        li.appendChild(a); toc.appendChild(li);
+      });
+      var links = toc.querySelectorAll('a');
+      function mark() {
+        var cur = 0;
+        hs.forEach(function (h, i) { if (h.getBoundingClientRect().top < 140) cur = i; });
+        links.forEach(function (l, i) { l.classList.toggle('on', i === cur); });
+      }
+      addEventListener('scroll', mark, { passive: true }); mark();
+    }
+    // Reading progress bar.
+    var bar = document.querySelector('.progress span');
+    function prog() {
+      var r = article.getBoundingClientRect(), total = r.height - innerHeight;
+      bar.style.width = Math.max(0, Math.min(1, -r.top / (total > 0 ? total : 1))) * 100 + '%';
+    }
+    addEventListener('scroll', prog, { passive: true }); prog();
+  })();
+</script>

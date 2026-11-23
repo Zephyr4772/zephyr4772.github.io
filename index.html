@@ -3,45 +3,117 @@ layout: default
 title: Sinhal Joshi
 ---
 {% assign tags = site.posts | map: "tag" | uniq | sort %}
-<section class="hero">
-  <h1 class="display">Blog <sup>({{ site.posts.size }})</sup></h1>
-  <p class="lede">{{ site.description }} I build and benchmark agent systems, retrieval pipelines and the evals that check whether any of it works.</p>
+{% assign total = site.posts.size %}
+{% assign latest = site.posts.first %}
+{% assign oldest = site.posts.last %}
+
+<section class="hero home-hero">
+  <div class="hero-text">
+    <p class="label">/ INDEX · NOTES ON AI EVALUATION</p>
+    <h1 class="display">Blog<sup>({{ total }})</sup></h1>
+    <p class="lede">{{ site.description }} I build and benchmark agent systems, retrieval pipelines and the evals that check whether any of it works.</p>
+  </div>
+  <a class="feature" href="{{ latest.url | relative_url }}">
+    <div class="fig">
+      <div class="fig-bar"><span>▢</span><span>[ LATEST · {{ latest.date | date: "%Y.%m.%d" }} ]</span><span>≡</span></div>
+      <div class="fig-body">{% if latest.image %}<img src="{{ latest.image | relative_url }}" alt="{{ latest.image_alt }}">{% else %}<div class="pattern"></div>{% endif %}</div>
+    </div>
+    <div class="feature-text">
+      <h2>{{ latest.title }} ↗</h2>
+      {% if latest.tag %}<span class="chip">{{ latest.tag | upcase }}</span>{% endif %}
+    </div>
+  </a>
 </section>
 
+{% include cross.html %}
+<section class="stats">
+  <div><p class="label">/ POSTS</p><p class="num">{% if total < 10 %}0{% endif %}{{ total }}</p></div>
+  <div><p class="label">/ TOPICS</p><p class="num">{% if tags.size < 10 %}0{% endif %}{{ tags.size }}</p></div>
+  <div><p class="label">/ FIRST POST</p><p class="num small">{{ oldest.date | date: "%Y.%m.%d" }}</p></div>
+  <div><p class="label">/ LATEST</p><p class="num small">{{ latest.date | date: "%Y.%m.%d" }}</p></div>
+</section>
+{% include cross.html %}
+
 <section class="index">
-  <aside class="filters">
-    <p class="label">/ FILTERS</p>
-    <p class="group">▾ Topic</p>
+  <aside class="filters"><div class="filters-inner">
+    <p class="label">/ FILTER BY TOPIC</p>
+    {% assign maxn = 1 %}
+    {% for t in tags %}{% assign n = site.posts | where: "tag", t | size %}{% if n > maxn %}{% assign maxn = n %}{% endif %}{% endfor %}
     <ul>
       {% for t in tags %}{% assign n = site.posts | where: "tag", t | size %}
-      <li><label><input type="checkbox" value="{{ t }}"><span class="box"></span>{{ t }} ({{ n }})</label></li>
+      <li>
+        <label>
+          <input type="checkbox" value="{{ t }}">
+          <span class="box"></span>
+          <span class="name">{{ t }}</span>
+          <span class="count">{{ n }}</span>
+        </label>
+        <span class="bar-track"><span class="bar-fill" style="width: {{ n | times: 100 | divided_by: maxn }}%"></span></span>
+      </li>
       {% endfor %}
     </ul>
-    <div class="fig small"><div class="fig-bar"><span>▢</span><span>[ FIG. 0 ]</span><span>≡</span></div><div class="fig-body"><div class="pattern"></div></div></div>
+    <button class="clear" type="button" hidden>CLEAR FILTERS ×</button>
+    <p class="hint">Topic bars show how many posts each topic has.</p></div>
   </aside>
 
   <div class="list">
-    <div class="list-head label"><span>/ DATE</span><span>/ NAME</span></div>
+    <div class="list-head label"><span>/ NO.</span><span>/ DATE</span><span>/ NAME</span><span>/ TOPIC</span><span></span></div>
     <ul class="posts">
       {% for post in site.posts %}
       <li data-tag="{{ post.tag }}">
         <a href="{{ post.url | relative_url }}">
-          <span class="date">■ {{ post.date | date: "%Y.%-m.%-d" }}</span>
+          <span class="no">{% if forloop.rindex < 10 %}0{% endif %}{{ forloop.rindex }}</span>
+          <span class="date">{{ post.date | date: "%Y.%m.%d" }}</span>
           <span class="title">{{ post.title }}{% if post.description %}<span class="desc">{{ post.description }}</span>{% endif %}</span>
+          <span class="topic">{% if post.tag %}<span class="chip">{{ post.tag | upcase }}</span>{% endif %}</span>
           <span class="plus">+</span>
         </a>
       </li>
       {% endfor %}
     </ul>
+    <p class="empty" hidden>No posts in this topic.</p>
   </div>
 </section>
+
+{% include cross.html %}
+{% assign tmax = latest.date | date: "%s" | plus: 0 %}
+{% assign tmin = oldest.date | date: "%s" | plus: 0 %}
+{% assign span = tmax | minus: tmin %}{% if span == 0 %}{% assign span = 1 %}{% endif %}
+<section class="timeline-wrap">
+  <div class="tl-head">
+    <p class="label">/ FIG. 1 · TIMELINE</p>
+    <p class="label muted">{{ oldest.date | date: "%b %Y" | upcase }} → {{ latest.date | date: "%b %Y" | upcase }}</p>
+  </div>
+  <div class="timeline">
+    <div class="axis"></div>
+    {% for post in site.posts reversed %}
+    {% assign t = post.date | date: "%s" | plus: 0 | minus: tmin | times: 100 | divided_by: span %}
+    {% assign row = forloop.index0 | modulo: 3 %}
+    <a class="tick row-{{ row }}{% if t > 55 %} flip{% endif %}" style="--x: {{ t }}" href="{{ post.url | relative_url }}" data-tag="{{ post.tag }}">
+      <span class="stem"></span>
+      <span class="dot"></span>
+      <span class="tick-label"><b>{% if forloop.index < 10 %}0{% endif %}{{ forloop.index }}</b> {{ post.date | date: "%m.%d" }} · {{ post.tag | upcase }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
 <script>
   (function () {
-    var boxes = document.querySelectorAll('.filters input'), rows = document.querySelectorAll('.posts li');
+    var boxes = document.querySelectorAll('.filters input'),
+        rows = document.querySelectorAll('.posts li'),
+        ticks = document.querySelectorAll('.timeline .tick'),
+        clear = document.querySelector('.filters .clear'),
+        empty = document.querySelector('.list .empty');
     function apply() {
       var on = [].filter.call(boxes, function (b) { return b.checked; }).map(function (b) { return b.value; });
-      rows.forEach(function (r) { r.hidden = on.length > 0 && on.indexOf(r.dataset.tag) < 0; });
+      var shown = 0;
+      rows.forEach(function (r) { var hide = on.length > 0 && on.indexOf(r.dataset.tag) < 0; r.hidden = hide; if (!hide) shown++; });
+      ticks.forEach(function (t) { t.classList.toggle('dim', on.length > 0 && on.indexOf(t.dataset.tag) < 0); });
+      clear.hidden = on.length === 0;
+      empty.hidden = shown > 0;
     }
     boxes.forEach(function (b) { b.addEventListener('change', apply); });
+    clear.addEventListener('click', function () { boxes.forEach(function (b) { b.checked = false; }); apply(); });
   })();
 </script>
